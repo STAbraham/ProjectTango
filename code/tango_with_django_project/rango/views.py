@@ -12,6 +12,8 @@ from rango.models import Category, Page
 
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 
+from datetime import datetime
+
 def index(request):
     # Query the database for a list of ALL categories currently stored.
     # Order the categories by number of likes in descending order.
@@ -31,21 +33,45 @@ def index(request):
     visits = int(request.COOKIES.get('visits', '1'))
 
     reset_last_visit_time = False
-    response = render(request, 'rango/index.html', context_dict)
-
-    # Does teh cookie last_visit exist?
+    # Does the cookie last_visit exist?
     if 'last_visit' in request.COOKIES:
         # Yes it does! Get the cookie's value
+        last_visit = request.COOKIES['last_visit']
+        # Cast the value to a Python date/time object.
+        last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
 
+        # If it's been more than a day since the last visit...
+        if (datetime.now() - last_visit_time).seconds > 5:
+            visits = visits + 1
+            # ... and flag that the cookie last visit needs to be updated for new
+            # visit stats
+            reset_last_visit_time = True
 
-    # Return a rendered response to send to the client.
-    # We make use of the shortcut function to make our lives easier.
-    # Note that the first parameter is the template we wish to use.
+        # STA Comment - The tutorial code never passes visits into
+        # the context_dictionary if the cookie already exists. If
+        # is a repeat visit
+        context_dict['visits'] = visits
+        response = render(request, 'rango/index.html', context_dict)
+    else:
+        # Cookie last_visit doesn't exist, so flag that it should be set
+        # because it will now be set
+        reset_last_visit_time = True
 
-    return render(request, 'rango/index.html', context_dict)
+        # STA Comment - Guessing this visits number will be used in the index
+        # template
+        context_dict['visits'] = visits
 
+        # Obtain our Response object early so we can add cookie information.
+        response = render(request, 'rango/index.html', context_dict)
 
-  #  return HttpResponse("Rango says hey there world! <br> If you want to learn more about Rango, please visit our <a href='/rango/about/'>About</a> page")
+    if reset_last_visit_time:
+        # STA comment - Set cookies, which are stored as attributes in the response # object, seperate from the context_dictionary and other mechanisms
+        response.set_cookie('last_visit', datetime.now())
+        response.set_cookie('visits', visits)
+
+    # Return a response back to the user, updating any cookies that need to be
+    # changed
+    return response
 
 def about(request):
     return render(request, 'rango/about.html')
