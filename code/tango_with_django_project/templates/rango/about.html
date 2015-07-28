@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}About Rango{% endblock %}
+
+{% block body_block %}
+    <body>
+        Rango says here is the about page.<br />
+        Return to <a href='/rango/'>Rango's Home Page</a><br />
+        <img src="{% static "images/alphaomega.png" %}" alt="Picture of Greek Symbol for Alpha and Omega" />
+    </body>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Home{% endblock %}
+
+{% block body_block %}
+
+        {% if user.is_authenticated %}
+        <h1>Rango says...hello {{ user.username }}!</h1>
+        {% else %}
+        <h1>Rango says...hello world!</h1>
+        {% endif %}
+        <h3>Top Categories</h3>
+        {% if categories %}
+            <ul>
+                {% for category in categories %}
+                <!-- Making the list a list of hyperlinks that refer to slug/url -->
+                <li><a href="{% url 'rango:category' category.slug %}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no categories present.</strong>
+        {% endif %}<br />
+
+        <h3>Top Pages</h3>
+        {% if pages %}
+            <ul>
+                {% for page in pages %}
+                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>No pages are yet available.</strong>
+        {% endif %}<br />
+
+{% endblock %}
+
