@@ -57,7 +57,27 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
     )
 
+# Additions related to django-registartion-redux package
+
+
 # end of STA mods (unless within pre-existing tuple)
+# If True, users can register
+REGISTRATION_OPEN = True
+# Provides one-week activation window;
+# STA - Think this is for confirmation purposes, like email confirmation
+ACCOUNT_ACTIVATE_DAYS = 7
+# If True, the user will be automatically logged in.
+REGISTRATION_AUTO_LOGIN = True
+# The page you want users to arrive at, after they've successfully logged-in
+# In original auth approach, you manually redirected to /rango/ as a result of
+# a True condition upon successful login.
+LOGIN_REDIRECT_URL = '/rango/'
+# The page users are directed to if they are not logged-in,
+# and are trying to access pages requiring authentication
+LOGIN_URL = '/accounts/login/'
+# STA Add after working through URLS file
+INCLUDE_REGISTER_URL = True
+
 
 # Application definition
 
@@ -68,7 +88,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rango'
+    'rango',
+    'registration', # This refers to django-registration-redux
 )
 
 MIDDLEWARE_CLASSES = (

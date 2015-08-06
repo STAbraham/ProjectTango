@@ -8,6 +8,10 @@
     <body>
         Rango says here is the about page.<br />
         Return to <a href='/rango/'>Rango's Home Page</a><br />
-        <img src="{% static "images/alphaomega.png" %}" alt="Picture of Greek Symbol for Alpha and Omega" />
+        <img src="{% static "images/alphaomega.png" %}" alt="Picture of Greek Symbol for Alpha and Omega" /><br />
+        {% if visits %}
+            <p>You have visited the Rango site {{visits}} time{% if visits > 1 %}s{% endif %}
+            </p>
+        {% endif %}
     </body>
 {% endblock %}

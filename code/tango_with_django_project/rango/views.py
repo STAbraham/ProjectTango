@@ -27,54 +27,44 @@ def index(request):
     context_dict['pages'] = page_list
 
     # Get the number of visits to the site.
-    # We use the COOKIES.get() function to obtain the visits cookie.
-    # If the cookie exists, the value returned is casted to an integer.
-    # If the cookie doesn't exist, we default to zero and cast that.
-    visits = int(request.COOKIES.get('visits', '1'))
-
+    # New implementation using session.get()
     reset_last_visit_time = False
-    # Does the cookie last_visit exist?
-    if 'last_visit' in request.COOKIES:
-        # Yes it does! Get the cookie's value
-        last_visit = request.COOKIES['last_visit']
-        # Cast the value to a Python date/time object.
+    visits = request.session.get('visits')
+    if not visits:
+        visits = 1
+
+    last_visit = request.session.get('last_visit')
+    if last_visit:
         last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
 
         # If it's been more than a day since the last visit...
-        if (datetime.now() - last_visit_time).seconds > 5:
+        if (datetime.now() - last_visit_time).seconds > 0:
             visits = visits + 1
             # ... and flag that the cookie last visit needs to be updated for new
             # visit stats
             reset_last_visit_time = True
 
-        # STA Comment - The tutorial code never passes visits into
-        # the context_dictionary if the cookie already exists. If
-        # is a repeat visit
-        context_dict['visits'] = visits
-        response = render(request, 'rango/index.html', context_dict)
     else:
         # Cookie last_visit doesn't exist, so flag that it should be set
         # because it will now be set
         reset_last_visit_time = True
 
-        # STA Comment - Guessing this visits number will be used in the index
-        # template
-        context_dict['visits'] = visits
-
-        # Obtain our Response object early so we can add cookie information.
-        response = render(request, 'rango/index.html', context_dict)
-
     if reset_last_visit_time:
-        # STA comment - Set cookies, which are stored as attributes in the response # object, seperate from the context_dictionary and other mechanisms
-        response.set_cookie('last_visit', datetime.now())
-        response.set_cookie('visits', visits)
+        # STA comment - setting cookies on the server side, which is connected to
+        # sessionID. This is done through the request object.
+        request.session['last_visit'] = str(datetime.now())
+        request.session['visits'] = visits
 
-    # Return a response back to the user, updating any cookies that need to be
-    # changed
+    context_dict['visits'] = visits
+    response = render(request, 'rango/index.html', context_dict)
     return response
 
 def about(request):
-    return render(request, 'rango/about.html')
+    visits = request.session.get('visits')
+    context_dict = {}
+    if visits:
+        context_dict['visits'] = visits
+    return render(request, 'rango/about.html', context_dict)
 
 def category(request, category_name_slug):
     # Create a context dictionary, specific to category view, which we

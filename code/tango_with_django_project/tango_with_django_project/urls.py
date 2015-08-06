@@ -10,6 +10,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^rango/', include('rango.urls', namespace = 'rango')), #Adds app specific urls.py file
+    (r'^accounts/', include('registration.backends.simple.urls', namespace = 'reg_redux')),
 )
 
 if settings.DEBUG:
