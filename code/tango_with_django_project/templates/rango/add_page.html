@@ -1,9 +1,40 @@
 {% extends 'base.html' %}
 
+{% load bootstrap3 %}
+
 {% block title %}Add Page{% endblock %}
 
 {% block body_block %}
-        <h1>Add a Page to {{ category.name}}</h1>
+<!--STA:Deleted the link to the signin.css from bootstrap b/c it changed the background color. Not sure why Tango is having us do this, no other styling elements are picked up, making all the form pages having a different background color than the rest of the app. This is OK for the signin page, but only makes sense there-->
+{% if category %}
+    <form role="form" id="page_form" method="post" action="{% url 'rango:add_page' category_slug %}">
+    <h2 class="form-signin-heading">Add a Page to <a href="{% url 'rango:category' category_slug %}">{{ category.name }}</a></h2>
+        {% csrf_token %}
+        {% bootstrap_form form show_label=False %}
+
+    <button class="btn btn-primary" type="submit" name="submit">Add Page</button>
+    </form>
+{% else %}
+    <p>This category does not exist.</p>
+{% endif %}
+{% endblock %}
+
+<!--
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+
+    {% for field in form.visible_fields %}
+        {{ field.errors }}
+        {{ field.help_text }}</br>
+        {{ field }}</br>
+    {% endfor %}
+-->
+
+<!--
+        <div class="page-header">
+            <h1>Add a Page to {{ category.name }}</h1>
+        </div>
 
         <form id="page_form" method="post" action="{% url 'rango:add_page' category_slug %}">
 
@@ -22,4 +53,4 @@
 
             <input type="submit" name="submit" value="Add Page"/>
         </form>
-{% endblock %}
+-->

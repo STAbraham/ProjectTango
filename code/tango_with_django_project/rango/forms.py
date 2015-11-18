@@ -44,14 +44,20 @@ class PageForm(forms.ModelForm):
 
         return cleaned_data
 
-class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
 
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
+"""
+Following forms are deprecated because we have refactored to use Django Registration Redux
+App, which comes with it's own forms implementation for registering. Preserved below for
+educational/infromational purposes
+"""
+# class UserForm(forms.ModelForm):
+#     password = forms.CharField(widget=forms.PasswordInput())
 
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
-        fields = ['website', 'picture']
+#     class Meta:
+#         model = User
+#         fields = ['username', 'email', 'password']
+
+# class UserProfileForm(forms.ModelForm):
+#     class Meta:
+#         model = UserProfile
+#         fields = ['website', 'picture']

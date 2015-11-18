@@ -90,6 +90,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rango',
     'registration', # This refers to django-registration-redux
+    'bootstrap3', # This refers to bootstrap toolkit v3
 )
 
 MIDDLEWARE_CLASSES = (

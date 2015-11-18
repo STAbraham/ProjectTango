@@ -5,35 +5,53 @@
 {% block title %}Home{% endblock %}
 
 {% block body_block %}
+        <div class="page-header">
+            {% if user.is_authenticated %}
+            <h1>Rango says...hello {{ user.username }}!</h1>
+            {% else %}
+            <h1>Rango says...hello world!</h1>
+            {% endif %}
+        </div>
 
-        {% if user.is_authenticated %}
-        <h1>Rango says...hello {{ user.username }}!</h1>
-        {% else %}
-        <h1>Rango says...hello world!</h1>
-        {% endif %}
-        <h3>Top Categories</h3>
-        {% if categories %}
-            <ul>
-                {% for category in categories %}
-                <!-- Making the list a list of hyperlinks that refer to slug/url -->
-                <li><a href="{% url 'rango:category' category.slug %}">{{ category.name }}</a></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <strong>There are no categories present.</strong>
-        {% endif %}<br />
+        <div class="row placeholders">
+            <div class="col-xs-12 col-sm-6 placeholder">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4>Top Categories</h4>
+                    </div>
+                </div>
 
-        <h3>Top Pages</h3>
-        {% if pages %}
-            <ul>
-                {% for page in pages %}
-                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <strong>No pages are yet available.</strong>
-        {% endif %}<br />
+                {% if categories %}
+                    <ul class="list-group">
+                        {% for category in categories %}
+                        <!-- Making the list a list of hyperlinks that refer to slug/url -->
+                        <li class='list-group-item'><a href="{% url 'rango:category' category.slug %}">{{ category.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <strong>There are no categories present.</strong>
+                {% endif %}<br />
+            </div>
+
+            <div class="col-xs-12 col-sm-6 placeholder">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4>Top Pages</h4>
+                    </div>
+                </div>
+
+                {% if pages %}
+                    <ul class="list-group">
+                        {% for page in pages %}
+                        <li class="list-group-item"><a href="{{ page.url }}">{{ page.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <strong>No pages are yet available.</strong>
+                {% endif %}<br />
+            </div>
+        </div>
+
         <p>You have visited the site {{ visits }} times! Thanks for coming! </p>
-
 {% endblock %}
 

@@ -2,16 +2,19 @@
 
 {% load staticfiles %}
 
-{% block title %}About Rango{% endblock %}
+{% block title %}About{% endblock %}
 
 {% block body_block %}
-    <body>
-        Rango says here is the about page.<br />
-        Return to <a href='/rango/'>Rango's Home Page</a><br />
-        <img src="{% static "images/alphaomega.png" %}" alt="Picture of Greek Symbol for Alpha and Omega" /><br />
+    <div class="page-header">
+        <h1>About Rango</h1>
+    </div>
+    <div>
+        This is <strong>Rango's about page.</strong><br />
         {% if visits %}
-            <p>You have visited the Rango site {{visits}} time{% if visits > 1 %}s{% endif %}
-            </p>
+        You have visited the Rango site {{visits}} time{% if visits > 1 %}s{% endif %}.<br />
         {% endif %}
-    </body>
+        Here's a picture of Rango!<br />
+        <img src="{% static "images/alphaomega.png" %}" alt="Picture of Greek Symbol for Alpha and Omega" /><br />
+        Return to <a href='/rango/'>Rango's Home Page</a><br />
+    </div>
 {% endblock %}
