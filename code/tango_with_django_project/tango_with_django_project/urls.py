@@ -7,7 +7,7 @@ from registration.backends.simple.views import RegistrationView
 # Create a new class that redirects the user to the index page, if succesful at logging
 class MyRegistrationView(RegistrationView):
     def get_success_url(self, request, user):
-        return '/rango/'
+        return '/rango/add_profile' # Could probably make this more relative using namespaces
 
 
 #This is called the urlpatterns "definition"; like you're defining any variable, in the form of a tuple

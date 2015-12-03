@@ -37,7 +37,8 @@ class Page(models.Model):
 
 class UserProfile(models.Model):
     # This line is required. Links UserPorfile to a User model instance.
-    user = models.OneToOneField(User) # have to import the User model above from django.conrib.aut.models
+    user = models.OneToOneField(User) # have to import the User model above from django.conrib.auth.models
+    test_field = models.IntegerField(default=0)
 
     # The additional attributes we wish to include.
     website = models.URLField(blank=True)

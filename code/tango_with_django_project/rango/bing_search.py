@@ -71,6 +71,14 @@ def run_query(search_terms):
     return results
 
 
+def main():
+    search_terms = raw_input("Please enter a search query: ")
+    results = run_query(search_terms)
+    for i in range(0, 10):
+        print str(i) + ", " + results[i]['title'] + ", " + results[i]['link']
+
+if __name__ == '__main__':
+    main()
 
 
 

@@ -44,6 +44,10 @@ class PageForm(forms.ModelForm):
 
         return cleaned_data
 
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['website', 'picture']
 
 """
 Following forms are deprecated because we have refactored to use Django Registration Redux

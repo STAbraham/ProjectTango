@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from django.http import HttpResponse, HttpResponseRedirect
 
@@ -10,9 +10,14 @@ from django.core.urlresolvers import reverse
 #Import the Category model
 from rango.models import Category, Page
 
-from rango.forms import CategoryForm, PageForm # UserForm, UserProfileForm
+from rango.forms import CategoryForm, PageForm, UserProfileForm # UserForm, UserProfileForm
 
 from datetime import datetime
+
+from rango.bing_search import run_query
+
+from registration.users import UserModel
+
 
 def index(request):
     # Query the database for a list of ALL categories currently stored.
@@ -70,12 +75,25 @@ def category(request, category_name_slug):
     # Create a context dictionary, specific to category view, which we
     # will pass to the template rendering engine.
     context_dict = {}
+    result_list = []
+
+    # Next few lines ares brought over from deprecated searh() view
+    if request.method == 'POST':
+        query = request.POST['query'].strip() #Not sure what strip() does yet
+
+        if query:
+            # Run our Bing function to get the results list
+            result_list = run_query(query)
+            context_dict['result_list'] = result_list
 
     try:
         # Can we find a category name slug with the given name?
         # If we can't, the .get() method raises a DoesNotExist exception
         # So the .get() method returns a model instance (object) or raises an exception
         category = Category.objects.get(slug=category_name_slug)
+        # Let's see if the below works for incrementing w/o an if statement
+        category.views += 1
+        category.save()
         context_dict['category_name'] = category.name
 
         # Retrieve all of the associated pages.
@@ -165,6 +183,78 @@ def restricted(request):
     return render(request, 'rango/restricted.html', {})
 
 # Use the login_required() decorator to ensure only those logged in can access the view whereby they can logout
+
+def search(request):
+    result_list = []
+
+    if request.method == 'POST':
+        query = request.POST['query'].strip() #Not sure what strip() does yet
+
+        if query:
+            # Run our Bing function to get the results list
+            result_list = run_query(query)
+
+    return render(request, 'search/search.html', {'result_list': result_list})
+
+def track_url(request):
+    if request.method == 'GET':
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+            try:
+                page = Page.objects.get(id=page_id)
+                page.views += 1
+                page.save()
+                return redirect(page.url)
+            except Page.DoesNotExist:
+                pass
+        return redirect('index')
+
+#             profile = profile_form.save(commit=False)
+#             profile.user = user # profile.user comes from our UserProfile model
+
+def register_profile(request):
+    registered = False
+
+    if request.method == 'POST':
+        form = UserProfileForm(data = request.POST)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            User = UserModel() # imported above
+            current_user = User.objects.get(username = request.user.username)
+            profile.user = current_user # form.user link comes from request object
+            print profile.user
+
+            if 'picture' in request.FILES:
+                form.picture = request.FILES['picture']
+
+            # Now we save the UserProfile model instance to the DB
+            profile.save()
+            # Update our variable to tell the template registeration was succesful
+            registered = True
+            return index(request)
+        else:
+            print form.errors
+    else:
+        # If the request was not a POST, display the form to enter details
+        # (i.e. upon first load)
+        form = UserProfileForm()
+
+    # Bad form (or form details), no form supplied...
+    # Render the form with error messages (if any).
+    return render(request, 'registration/profile_registration.html', {'form': form})
+
+
+"""
+The following is the non-querystring way to implement track_url. Corresponding changes will have to be made
+to Rango's URLConf and "category.html". You implemented this on your own, which is a perfectly acceptable solution to the track_url
+prompt. Refactoring to use querystrings so that you have an understanding of how to implement.
+"""
+# def track_url(request, page_id):
+#     page = Page.objects.get(id=page_id)
+#     page.views += 1
+#     page.save()
+#     return redirect(page.url)
+
 
 
 """
