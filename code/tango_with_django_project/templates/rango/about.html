@@ -8,6 +8,7 @@
     <div class="page-header">
         <h1>About Rango</h1>
     </div>
+
     <div>
         This is <strong>Rango's about page.</strong><br />
         {% if visits %}
@@ -16,5 +17,14 @@
         Here's a picture of Rango!<br />
         <img src="{% static "images/alphaomega.png" %}" alt="Picture of Greek Symbol for Alpha and Omega" /><br />
         Return to <a href='/rango/'>Rango's Home Page</a><br />
+        <button onClick="alert('You clicked the button using Javascript.');">
+            Click Me - I run Javascript
+        </button>
+
+        <button id="about-btn"> Click Me - I'm Javascript on Speed</button>
+        <div id="msg">Hello</div>
+        <p>is a example</p>
+        <p>This is another example</p>
+
     </div>
 {% endblock %}

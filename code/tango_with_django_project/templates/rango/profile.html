@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load bootstrap3 %}
+
+{% block body_block %}
+    <div class="page-header">
+        <h1>Profile Information</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-md-4 col-md-offset-4">
+            <div class="thumbnail">
+                <img src="/media/{{ profile.picture }}" alt="{{ profile.picture }}">
+                <div class="caption text-center">
+                    <h3>Username: {{ user.username }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-md-4 col-md-offset-4 text-center">
+            <p><strong>Email: </strong>{{ user.email }}</p>
+            <p><strong>Website: </strong>{{ profile.website }}</p>
+        </div>
+    </div>
+
+{% endblock %}
+
+<!--
+    <ul clas="list-group">
+        <li class="list-group-item"><p><strong>Email: </strong>{{ user.email }}</p></li>
+        <li class="list-group-item"><p><strong>Website: </strong>{{ profile.website }}</p></li>
+    </ul>
+-->

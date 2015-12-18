@@ -42,7 +42,7 @@ class UserProfile(models.Model):
 
     # The additional attributes we wish to include.
     website = models.URLField(blank=True)
-    picture = models.ImageField(upload_to='profile_images', blank=True)
+    picture = models.ImageField(upload_to='profile_images', default="Is Anything Registering?")
 
     # Override the __unicode__() mehod to return something meaningful, from the linked User object
     def __unicode__(self):

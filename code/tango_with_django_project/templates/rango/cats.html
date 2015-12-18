@@ -1,15 +1,15 @@
 {% if cats %}
-    <ul class="nav nav-sidebar">
+    <ul class="nav nav-pills nav-stacked">
     {% for c in cats %}
         {% if c == act_cat %}
-            <li class="active">
+            <li role="presentation" class="active">
         {% else %}
-            <li>
+            <li role="presentation">
         {% endif %}
         <a href="{% url 'rango:category' c.slug %}">{{ c.name }}</a></li>
     {% endfor %}
 
 {% else %}
-    <li><strong>There are no categories present.</strong></li>
+    <li role="presentation"><strong>There are no categories present.</strong></li>
     </ul>
 {% endif %}

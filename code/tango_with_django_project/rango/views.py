@@ -8,9 +8,11 @@ from django.contrib.auth.decorators import login_required
 
 from django.core.urlresolvers import reverse
 #Import the Category model
-from rango.models import Category, Page
+from rango.models import Category, Page, UserProfile
 
 from rango.forms import CategoryForm, PageForm, UserProfileForm # UserForm, UserProfileForm
+
+from rango.utils import get_category_list
 
 from datetime import datetime
 
@@ -98,7 +100,7 @@ def category(request, category_name_slug):
 
         # Retrieve all of the associated pages.
         # Note that filter returns >= 1 model instance (object).
-        pages = Page.objects.filter(category=category)
+        pages = Page.objects.filter(category=category).order_by('-views')
 
         # Adds our results list to the template context under name pages.
         context_dict['pages'] = pages
@@ -225,7 +227,7 @@ def register_profile(request):
             print profile.user
 
             if 'picture' in request.FILES:
-                form.picture = request.FILES['picture']
+                profile.picture = request.FILES['picture']
 
             # Now we save the UserProfile model instance to the DB
             profile.save()
@@ -242,6 +244,64 @@ def register_profile(request):
     # Bad form (or form details), no form supplied...
     # Render the form with error messages (if any).
     return render(request, 'registration/profile_registration.html', {'form': form})
+
+@login_required
+def like_category(request):
+
+    category_id = None
+    if request.method == 'GET':
+        category_id = request.GET['category_id']
+
+    likes = 0
+    if category_id:
+            category = Category.objects.get(id=category_id)
+            if category:
+                category.likes += 1
+                likes = category.likes
+                category.save()
+
+    return HttpResponse(likes)
+
+@login_required
+def auto_add_page(request):
+    context_dict = {}
+
+    print "Auto Add Page being called"
+    if request.method == 'GET':
+        category = Category.objects.get(id=int(request.GET['category_id']))
+
+    if category:
+        page = Page.objects.get_or_create(category=category, title=request.GET['title'])[0] # foreign key, "category," needs to be linked to object not number.
+        page.url = request.GET['url']
+        page.save()
+        pages = Page.objects.filter(category=category).order_by('-views')
+        context_dict['pages'] = pages
+        return render(request, 'rango/pages.html', context_dict)
+
+    # for page in pages:
+    #     print page.title
+
+@login_required
+def profile(request):
+    context_dict = {}
+    profile = UserProfile.objects.get(user_id = request.user.id)
+    context_dict['profile'] = profile
+    return render(request, 'rango/profile.html', context_dict)
+
+
+def suggest_category(request):
+
+    cat_list = []
+    starts_with = ''
+    if request.method =='GET':
+        # Something in Jquery function needs to define suggestion key in GET dictionary
+        starts_with = request.GET['suggestion']
+
+    cat_list = get_category_list(8, starts_with) # 8 results will be passed on
+
+    return render(request, 'rango/cats.html', {'cats': cat_list})
+
+
 
 
 """
